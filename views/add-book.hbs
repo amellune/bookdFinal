@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add a book</title>
+</head>
+<body>
+  <h1> Add book </h1>
+  <form action="/add-book" method="POST" enctype="multipart/form-data">
+      <fieldset>
+      <label for="coverimage"> Upload cover image: </label><br/>
+      <input name="cover" type="file" required id="coverimage"/><br/>
+  </fieldset>
+  <fieldset>
+  <input type="text" placeholder="Title" name="book-title"></br>
+  <input type="text" placeholder="Author" name="book-author"></br>
+  <input type="text" placeholder="Description" name="book-description"></br>
+  <label for="category">Select Genre *: </label>
+           <select name="book-genre" id="book-genre">
+              <option value="Fiction">Fiction</option>
+              <option value="Nonfiction">Nonfiction</option>
+              <option value="Romance">Romance</option>
+          </select> </br>
+</fieldset>
+<fieldset>
+ <label for="keywords">Choose keywords *: </label>
+ <select name="keywords" id="keywords" multiple>
+     <option value="Historical Fiction">Historical Fiction</option>
+     <option value="Women’s Fiction">Women’s Fiction</option>
+     <option value="Literary Fiction">Literary Fiction</option>
+     <option value="History">History</option>
+     <option value="Science">Science</option>
+     <option value="Business">Business</option>
+     <option value="Contemporary Romance ">Contemporary Romance </option>
+     <option value="Historical Romance">Historical Romance</option>
+     <option value="Romantic Suspense">Romantic Suspense</option>
+     <option value="crimeFiction">Crime Fiction</option>
+
+  </select>
+ <p>* Hold down the Ctrl (windows) or Command (Mac) button to select multiple options.</p>
+
+</fieldset>
+
+  <button type="submit">Submit</button>
+</form>
+</body>
+</html>

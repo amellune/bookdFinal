@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+{{!-- Bootstrap --}}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+
+  <title>Book app - home page</title>
+  <style>
+  		li{
+  			margin:20px;
+  		}
+
+
+	</style>
+</head>
+<body>
+    <ul class="nav nav-tabs justify-content-center">
+  		<li class="nav-item dropdown">
+    		<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">Bookd</a>
+    		<ul class="dropdown-menu">
+				<li><a href="/dashboard">Books</a></li>
+      			<li><a href="/profile">Profile</a></li>
+    		</ul>
+  		</li>
+	</ul>
+    <h2>Profile</h2>
+
+    <a href="/profile">Back to Profile</a>
+
+    <div>
+
+
+        <form action="/add-keyword" method="POST">
+
+        <fieldset>
+
+            <label for="keywords">Add your 3 keywords *: </label></br>
+            <select name="keywords" id="keywords" multiple>
+                        <option value="Historical Fiction">Historical Fiction</option>
+                        <option value="Women’s Fiction">Women’s Fiction</option>
+                        <option value="Literary Fiction">Literary Fiction</option>
+                        <option value="History">History</option>
+                        <option value="Science">Science</option>
+                        <option value="Business">Business</option>
+                        <option value="Contemporary Romance ">Contemporary Romance </option>
+                        <option value="Historical Romance">Historical Romance</option>
+                        <option value="Romantic Suspense">Romantic Suspense</option>
+                        <option value="crimeFiction">Crime Fiction</option>
+                    </select></br>
+        </fieldset></br>
+
+
+                <button type="submit">Submit</button>
+
+                <p>* Hold down the Ctrl (windows) or Command (Mac) button to select multiple options.</p>
+
+         </form>
+
+
+
+
+
+</body>
+
+</html>

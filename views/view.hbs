@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+
+{{!-- Bootstrap --}}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<script>
+
+</script>
+
+  <title>Book app - home page</title>
+  <style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+    </style>
+    <!-- Custom styles for this template -->
+<link href="/css/main.css" rel="stylesheet">
+</head>
+<body>
+    <header>
+
+      <div class="navbar navbar-dark bg-dark shadow-sm">
+        <div class="container d-flex justify-content-between">
+          <a href="#" class="navbar-brand d-flex align-items-center">
+            <strong>Book'd</strong>
+          </a>
+          <a href="/logout" class="navbar-brand d-flex align-items-center">
+          <button type="button" class="btn btn-outline-secondary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+              <path fill-rule="evenodd" d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0v2z"/>
+              <path fill-rule="evenodd" d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3z"/>
+          </svg> log out
+          </button>
+           </a>
+
+          </div>
+      </div>
+    </header>
+    <section class="jumbotron text-center">
+    <div class="container">
+
+
+      <ul class="nav nav-tabs justify-content-center">
+          <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">MENU</a>
+              <ul class="dropdown-menu">
+                  <li><a href="/dashboard">Back to dashboard</a></li>
+                  <li><a href="/profile">Profile</a></li>
+                  <li><a href="/add-book">Add Book</a><li>
+              </ul>
+          </li>
+      </ul>
+
+       <h1> {{details.book-title}}</h1>
+       <small class="text-muted"> by: {{details.book-author}}</small> </br>
+       Category: {{details.book-genre}} </br>
+       <small class="text-muted"> Tags:{{details.keywords}}</small>
+
+    </div>
+  </section>
+
+
+
+<div class="album py-5 bg-light">
+  <div class="container">
+
+      <div class="row">
+		{{#each book}}
+        <div class="col-md-4">
+            <div class="card mb-4 box-shadow">
+
+            <img src = "/uploads/{{cover}}" class="card-img-top" alt="emotions" width=80% height="350">
+            <!-- <div><img src = "{{cover}}" width ="80"</div> -->
+            <!-- <div><img src = "data:image/gif;base64,{{cover.md5}}" width ="80"</div> -->
+            <div class="card-body">
+                <p class ="card-text">
+
+
+            <small class="text-muted">{{details.book-description}}</small> </br>
+
+
+                </p>
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group">
+                 <a href="/cart">    <button type="button" class="btn btn-sm btn-outline-secondary"> add to cart</button> </a>
+
+                </div>
+                    <small class="text-muted"> </small>
+            </div>
+            </div>
+
+        </div>
+    </div>
+		{{/each}}
+    </div>
+  </div>
+
+    <footer class="text-center">
+     <div class="container">
+         <hr>
+       <p class="float-right">
+         <a href="#">Back to top</a>
+       </p>
+       <p> &copy; Copyright 2021 by Book'd</p>
+
+     </div>
+   </footer>
+
+
+
+  </body>
+  </html>
