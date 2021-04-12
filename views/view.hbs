@@ -60,53 +60,36 @@
           <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">MENU</a>
               <ul class="dropdown-menu">
-                  <li><a href="/dashboard">Back to dashboard</a></li>
+                  <li><a href="/dashboard">Recommendation</a></li>
                   <li><a href="/profile">Profile</a></li>
-                  <li><a href="/add-book">Add Book</a><li>
+                  <li><a href="/seeBook">All book</a><li>
               </ul>
           </li>
       </ul>
 
-       <h1> {{details.book-title}}</h1>
-       <small class="text-muted"> by: {{details.book-author}}</small> </br>
-       Category: {{details.book-genre}} </br>
-       <small class="text-muted"> Tags:{{details.keywords}}</small>
+      	{{#each book}}
+
+       <h1> {{details.book-title}}</h1>       
 
     </div>
   </section>
 
+  <div class="text-center">
+        <img src = "/uploads/{{cover}}" class="img-thumbnail" width = 300 alt=" book cover" >
+        
+        <p class ="card-text">            
+        <small class="text-muted"> by: {{details.book-author}}</small> </br>
+        Category: {{details.book-genre}} </br>
+        <small class="text-muted"> Tags:{{details.keywords}}</small>
+        </p>
+
+        <p >{{details.book-description}}</p>
 
 
-<div class="album py-5 bg-light">
-  <div class="container">
-
-      <div class="row">
-		{{#each book}}
-        <div class="col-md-4">
-            <div class="card mb-4 box-shadow">
-
-            <img src = "/uploads/{{cover}}" class="card-img-top" alt="emotions" width=80% height="350">
-            <!-- <div><img src = "{{cover}}" width ="80"</div> -->
-            <!-- <div><img src = "data:image/gif;base64,{{cover.md5}}" width ="80"</div> -->
-            <div class="card-body">
-                <p class ="card-text">
+  </div>      
+       
 
 
-            <small class="text-muted">{{details.book-description}}</small> </br>
-
-
-                </p>
-            <div class="d-flex justify-content-between align-items-center">
-                <div class="btn-group">
-                 <a href="/cart">    <button type="button" class="btn btn-sm btn-outline-secondary"> add to cart</button> </a>
-
-                </div>
-                    <small class="text-muted"> </small>
-            </div>
-            </div>
-
-        </div>
-    </div>
 		{{/each}}
     </div>
   </div>
