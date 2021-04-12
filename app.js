@@ -6,14 +6,18 @@ const bodyParser= require('body-parser'); //handles reading data from forms
 const hbs = require('hbs'); //templating engine
 var request = require('request');
 var fs = require("fs");
+const cors = require('cors');
 const MongoClient = require('mongodb').MongoClient; //database
 const objectId = require('mongodb').ObjectID;
 var session = require('express-session');
-const { response } = require('express');
-const { createBrotliCompress } = require('zlib');
-const { EWOULDBLOCK } = require('constants');
-//const MongoStore = require("connect-mongo")(session);
 var MongoDBStore = require('connect-mongodb-session')(session);
+
+
+const mongoose = require('mongoose');
+const config = require('./DB.js');
+const postRoute = require('./post.route');
+mongoose.Promise = global.Promise;
+
 
 
 const app = express();
@@ -36,6 +40,11 @@ app.listen(3000, () => {
   })
 })
 
+app.use(cors());
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
+app.set('viewEngine', 'hbs' );
+
 // session-based authentication
 
 app.use(session({
@@ -49,9 +58,6 @@ app.use(session({
   })
 );
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
-app.set('viewEngine', 'hbs' );
 
 const redirectLogin = (req, res, next)=>{
     if(!req.session.userId){
@@ -63,7 +69,7 @@ const redirectLogin = (req, res, next)=>{
 
 const redirectDash = (req, res, next)=>{
     if(req.session.userId){
-        res.redirect('/dashboard')
+        res.redirect('/seeBook')
     }else{
         next()
     }
@@ -73,15 +79,8 @@ const redirectDash = (req, res, next)=>{
 
 app.use(express.static(path.join(__dirname, 'public')))  //making this public folder accessable
 
-//app.use(express.static('./public/uploads'));
-
 app.use(fileUpload(
-//     {
-//     useTempFiles: true,
-//     tempFileDir: path.join(__dirname, 'tmp'),
-//     createParentPath:true,
-//     limit:{fileSize:1024}
-// }
+
 ));
 
 
@@ -104,23 +103,19 @@ app.post('/signup', redirectDash, (req, res) => {
    })
   })
 
-var sess; var thePassword; var theEmail; var user; var password; var thisKeyword;
-var fileName;
+var sess; var thePassword; var theEmail; 
+var user; var password; var thisKeyword;
+var fileName; 
 
 app.get('/login', redirectDash, (req, res) => {
-  res.render('login.hbs'); //by default, hbs views are placed in a "views" folder
+  res.render('login.hbs'); 
 })
 
 app.post('/login', redirectDash, (req, res, next) => {
 
   theEmail = req.body.email;
   thePassword = req.body.password;
-
-  // if (theUEmail === "" || thePassword === "") {
-  //     res.render("/login", {
-  //             errorMessage: "Please enter both, email and password to sign up."
-  //  })};
-
+ 
   db.collection('user').find({email: theEmail})
   .next()
   .then(user => {
@@ -135,17 +130,16 @@ app.post('/login', redirectDash, (req, res, next) => {
           req.session.userName = user.username;
           req.session.userId = user._id;
           console.log(req.session.userId);
-          res.redirect("/dashboard");
+          res.redirect("/seeBook");
 
           // res.render('dashboard.hbs',{
           //     user:user.username})
 
       }else{
           res.send('Incorrect Username and/or Password!');
-      }
+          }
 
   });
-
 
 })
 
@@ -166,7 +160,7 @@ app.get('/add-book', redirectLogin, (req, res) => {
  })
 
 let uploadImage, uploadPath, data;
- //routing a /book to a functionality
+ //book upload with cover image
  app.post('/add-book', async(req, res, next) => {
 
      // try{
@@ -179,9 +173,7 @@ let uploadImage, uploadPath, data;
          //mongdb data creation
          data = {
             cover: fileName,
-            // cover: uploadPath,
-             // cover:uploadImage,
-             details: req.body,
+            details: req.body,
          }
 
          db.collection('book').insertOne(data, (err, result) => {
@@ -192,6 +184,9 @@ let uploadImage, uploadPath, data;
              })
 
  })
+
+
+
 
 
   app.get('/book', (req, res) => {
@@ -206,6 +201,99 @@ let uploadImage, uploadPath, data;
  app.get('/add-keyword', redirectLogin, (req, res) => {
     res.render('add-keyword.hbs'); //by default, hbs views are placed in a "views" folder
  })
+
+
+ app.get('/keyword', (req, res) => {
+    db.collection('keywords').findOne({}, (err, result) => {
+      if (err) throw err;
+      //To pass variables to a view, include an object as a second parameter. Here we pass "result" data.
+      //The view will reference it as "notes"
+      res.send({keyword: result}) //by default, hbs views are placed in a "views" folder.
+  })
+  })
+
+
+  app.get('/updateKeyword/:id', (req, res) => {
+    db.collection('keywords').findOne({_id: new objectId(req.params.id)}, (err, result) => {
+      if (err) throw err;
+      //To pass variables to a view, include an object as a second parameter. Here we pass "result" data.
+      //The view will reference it as "notes"
+      res.render('updateKeyword.hbs', {keywords: result}) //by default, hbs views are placed in a "views" folder.
+  })
+  })
+
+
+  app.post('/deleteKeyword/:id',(req, res) => {
+    console.log (req.query.method);
+    if(req.query.method == 'delete'){
+        db.collection('keywords').deleteOne({_id: new objectId(req.params.id)});
+        console.log(req.params.id);
+        console.log("the data is deleted");
+        res.redirect('/profile') ;
+    }
+   
+    res.status(200).send();       
+})
+
+
+//view all books
+
+app.get('/seeBook',(req, res) => {
+
+  db.collection('book').find().toArray((err, result) => {
+      if (err) return console.log(err)
+      res.render('seeBook.hbs',{book: result}) //by default, hbs views are placed in a "views" folder.
+    //    res.json(result)
+      
+})
+})
+
+//view specific book when click "VIEW"
+
+
+
+app.get('/view/:id',(req, res) => {
+  console.log("this specfic book GET");
+  console.log(req.params.id);
+  
+  if(req.query.method == 'get'){
+    
+   db.collection('book').find({_id: new objectId(req.params.id)}).toArray((err, result) => {
+    
+      res.render('view.hbs',{book: result});  
+            
+    })
+}  
+})
+
+
+
+app.post('/view/:id',(req, res) => {
+  console.log("this specfic book POST");
+
+  
+  console.log(req.params.id);
+  console.log(req.query.method);
+
+   if(req.query.method == 'get'){ 
+
+
+    try{
+
+      db.collection('book').findOne({_id: new objectId(req.params.id)}, (err, result) => {
+     
+        console.log(result);
+        // res.render('view.hbs',{book: result});   
+        
+       // res.redirect('/view/:id');
+           res.json(result);      
+        
+      })
+
+     }catch(e){console.log('Oh no!')} 
+}  
+})
+
 
 
  app.post('/add-keyword', (req, res) => {
@@ -228,22 +316,7 @@ let uploadImage, uploadPath, data;
     })
 
 
-
-    // db.collection('user').update(
-    //     {_id:req.session.userId},
-    //     {keyword:req.body},
-    //     (err, result) => {
-    //  if (err) return console.log(err)
-    //
-    //  console.log(req.body)
-    //
-    //  console.log('saved to USER') //debug console message
-    // res.redirect('/profile')
-   //})
  })
-
-
-
 
 
 //display the dashboard/main page
@@ -251,44 +324,51 @@ let uploadImage, uploadPath, data;
 
 app.get('/dashboard', redirectLogin, (req, res) => {
 
-    db.collection('keywords').find({email: theEmail})
-    .next()
-    .then(keyword=> {
+    const checkKeywords = db.collection('keywords').find({email: theEmail});
+    if(!checkKeywords){ res.direct('/add-keyword')}else{
 
-        console.log(keyword.keywords.keywords);
-        const keyword1 = keyword.keywords.keywords[0];
-        const keyword2 = keyword.keywords.keywords[1];
-        const keyword3 = keyword.keywords.keywords[2];
-        console.log(keyword1);
-        console.log(keyword2);
-        console.log(keyword3);
+        db.collection('keywords').find({email: theEmail})
+        .next()
+        .then(keyword=> {
 
-        // console.log(keyword.keywords);
-        // thisKeyword = keyword.keywords.keywords;
-        // console.log(thisKeyword);
+            console.log(keyword.keywords.keywords);
+            const keyword1 = keyword.keywords.keywords[0];
+            const keyword2 = keyword.keywords.keywords[1];
+            const keyword3 = keyword.keywords.keywords[2];
+            console.log(keyword1);
+            console.log(keyword2);
+            console.log(keyword3);
 
-        db.collection('book').find({"details.keywords":{$in: [keyword1,keyword2,keyword3]}}).toArray((err, result) => {
-            if (err) return console.log(err)
-            //To pass variables to a view, include an object as a second parameter. Here we pass "result" data.
-        //The view will reference it as "notes"
-        res.render('dashboard.hbs', {book: result}) //by default, hbs views are placed in a "views" folder.
+            // console.log(keyword.keywords);
+            // thisKeyword = keyword.keywords.keywords;
+            // console.log(thisKeyword);
+
+            db.collection('book').find({"details.keywords":{$in: [keyword1,keyword2,keyword3]}}).toArray((err, result) => {
+                if (err) return console.log(err)
+                //To pass variables to a view, include an object as a second parameter. Here we pass "result" data.
+            //The view will reference it as "notes"
+            res.render('dashboard.hbs', {book: result}) //by default, hbs views are placed in a "views" folder.
+
+            })
 
         })
 
-    })
+    }
+
+
 })
 
 
 
-// app.get('/dashboard',redirectLogin, (req, res) => {
-//  // res.render('/dashboard'); //by default, hbs views are placed in a "views" folder
-//   db.collection('book').findOne({}, (err, result) => {
-//     if (err) throw err;
-//     //To pass variables to a view, include an object as a second parameter. Here we pass "result" data.
-//     //The view will reference it as "notes"
-//     res.render('dashboard.hbs', {book: result}) //by default, hbs views are placed in a "views" folder.
-//   })
-//   })
+app.get('/dashboard',redirectLogin, (req, res) => {
+ // res.render('/dashboard'); //by default, hbs views are placed in a "views" folder
+  db.collection('book').findOne({}, (err, result) => {
+    if (err) throw err;
+    //To pass variables to a view, include an object as a second parameter. Here we pass "result" data.
+    //The view will reference it as "notes"
+    res.render('dashboard.hbs', {book: result}) //by default, hbs views are placed in a "views" folder.
+  })
+  })
 
 
 app.post('/dashboard', (req, res) => {
@@ -306,17 +386,10 @@ app.get('/profile', redirectLogin, (req, res) => {
   })
 })
 
-//view all books
 
-app.get('/seeBook',(req, res) => {
 
-    db.collection('book').find().toArray((err, result) => {
-           if (err) return console.log(err)
-    //To pass variables to a view, include an object as a second parameter. Here we pass "result" data.
-    //The view will reference it as "notes"
-    res.render('seeBook.hbs', {book: result}) //by default, hbs views are placed in a "views" folder.
-})
-})
+
+
 
 app.post('/delete-keyword1', (req, res)=>{
     db.collection("keywords").update(  //remove a field from a collection
@@ -325,21 +398,6 @@ app.post('/delete-keyword1', (req, res)=>{
     )
     res.redirect('/profile')
 
-})
-
-// routing a specific book when click "view"
-app.get('/view/', (req,res)=>{
-
-    console.log(req.body.id);
-    console.log(req.body.title);
-    var id = req.params.id;
-
-    db.collection('book').find({_id: id}).toArray((err, result) => {
-           if (err) return console.log(err)
-    //To pass variables to a view, include an object as a second parameter. Here we pass "result" data.
-    //The view will reference it as "notes"
-    res.render('view.hbs', {book: result}) //by default, hbs views are placed in a "views" folder.
-})
 })
 
 
