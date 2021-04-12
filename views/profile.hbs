@@ -6,9 +6,12 @@
 {{!-- Bootstrap --}}
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
+
 <script>
     $.get( "/login", function(user) { user = user;});
 </script>
+
 
   <title>Book app - home page</title>
   <style>
@@ -56,7 +59,8 @@
       <h1 class="jumbotron-heading">My profile</h1>
       <p>
             <a href="/add-keyword" class="btn btn-primary my-2">Add your keywords</a>
-            <a href="/dashboard" class="btn btn-secondary my-2">Back to Dashboard</a>
+            <a href="/seeBook" class="btn btn-secondary my-2">See All books</a>
+            <a href="/dashboard" class="btn btn-secondary my-2">Our recommendation</a>
       </p>
 
 
@@ -64,17 +68,19 @@
   </section>
 
   <div class="my-3 p-3 bg-white rounded box-shadow">
-       {{#each keywords}}
+       {{#each keywords as |keyword|}}
 
-         <h2 class="border-bottom border-gray pb-2 mb-0">Preferences</h2>
+     
+
+        <h2 class="border-bottom border-gray pb-2 mb-0">Preferences</h2>
+        <form action="/deleteKeyword/{{keyword._id}}?method=delete" method="POST">
          <div class="media text-muted pt-3">
            <img data-src="holder.js/32x32?theme=thumb&bg=007bff&fg=007bff&size=1" alt="" class="mr-2 rounded">
            <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
              <div class="d-flex justify-content-between align-items-center w-100">
                <strong class="text-gray-dark">{{keywords.keywords.[0]}} </strong>
-               <a href="/edit-keyword1">Edit</a>
+                <button type="submit"> Delete </button>
              </div>
-
            </div>
          </div>
          <div class="media text-muted pt-3">
@@ -82,7 +88,8 @@
            <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
              <div class="d-flex justify-content-between align-items-center w-100">
                <strong class="text-gray-dark">{{keywords.keywords.[1]}} </strong>
-               <a href="/edit-keyword1">Edit</a>
+               {{!-- <a href="/edit-keyword1">Edit</a> --}}
+               <button type="submit"> Delete</button>
              </div>
 
            </div>
@@ -92,19 +99,22 @@
            <div class="media-body pb-3 mb-0 small lh-125 border-bottom border-gray">
              <div class="d-flex justify-content-between align-items-center w-100">
                <strong class="text-gray-dark">{{keywords.keywords.[2]}} </strong>
-              <a href="/edit-keyword1">Edit</a>
+              {{!-- <a href="/edit-keyword1">Edit</a> --}}
+              <button type="submit"> Delete</button>
              </div>
 
            </div>
          </div>
+         </form>
+
          {{/each}}
     </div>
 
-    <div class="my-3 p-3 bg-white rounded box-shadow">
+    {{!-- <div class="my-3 p-3 bg-white rounded box-shadow">
 
            <h2 class="border-bottom border-gray pb-2 mb-0">History of Order</h2>
 
-    </div>
+    </div> --}}
 
 
         <footer class="text-center">
@@ -118,7 +128,9 @@
          </div>
        </footer>
 
+        <script src="/js/vue.js"></script>
 
+       
 
      </body>
 </html>
